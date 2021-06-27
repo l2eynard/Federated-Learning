@@ -112,8 +112,8 @@ X_train, X_test, y_train, y_test = train_test_split(X_train, y_train, test_size 
 ### Define Client
 class CifarClient(fl.client.NumPyClient):
 
-    # def get_parameters(self):
-    #     return model.get_weights()
+    def get_parameters(self):
+         return params
 
     # def fit(self, parameters, config):
     #     model.set_weights(parameters)
