@@ -190,7 +190,8 @@ if __name__ == "__main__":
     model.add(Dense(1))
 
     # compile model using mse as a measure of model performance
-    model.compile(optimizer='adam', loss='mean_squared_error')
+    # model.compile(optimizer='adam', loss='mean_squared_error')
+    model.compile(optimizer='adam', loss='mean_squared_error', metrics='accuracy')
 
     from keras.callbacks import EarlyStopping
 
@@ -213,6 +214,7 @@ if __name__ == "__main__":
 
         def evaluate(self, parameters, config):  # type: ignore
             model.set_weights(parameters)
+            #loss, accuracy = model.evaluate(x_test, y_test)
             loss, accuracy = model.evaluate(x_test, y_test)
             return loss, len(x_test), {"accuracy": accuracy}
 
