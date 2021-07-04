@@ -172,34 +172,37 @@ if __name__ == "__main__":
 
     x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=0.2)
 
-    """
-    Loading Keras Model
-    """
-    from keras.models import Sequential
-    from keras.layers import Dense
-
-    # create model
-    model = Sequential()
-
-    # get number of columns in training data
-    n_cols = train_x.shape[1]
-
-    # add model layers
-    model.add(Dense(10, activation='relu', input_shape=(n_cols,)))
-    model.add(Dense(10, activation='relu'))
-    model.add(Dense(1))
-
-    # compile model using mse as a measure of model performance
-    # model.compile(optimizer='adam', loss='mean_squared_error')
-    model.compile(optimizer='adam', loss='mean_squared_error', metrics='accuracy')
-
+    # """
+    # Loading Keras Model
+    # """
+    # from keras.models import Sequential
+    # from keras.layers import Dense
+    #
+    # # create model
+    # model = Sequential()
+    #
+    # # get number of columns in training data
+    # n_cols = train_x.shape[1]
+    #
+    # # add model layers
+    # model.add(Dense(10, activation='relu', input_shape=(n_cols,)))
+    # model.add(Dense(10, activation='relu'))
+    # model.add(Dense(1))
+    #
+    # # compile model using mse as a measure of model performance
+    # # model.compile(optimizer='adam', loss='mean_squared_error')
+    # model.compile(optimizer='adam', loss='mean_squared_error', metrics='accuracy')
+    #
     from keras.callbacks import EarlyStopping
-
+    #
     # set early stopping monitor so the model stops training when it won't improve anymore
     early_stopping_monitor = EarlyStopping(patience=3)
     """
     End Keras Model
     """
+    from tensorflow import keras
+    model = keras.models.load_model("basemodel")
+    model.compile(optimizer='adam', loss='mean_squared_error', metrics='accuracy')
 
 
     # Define Flower client
