@@ -11,7 +11,9 @@ Run on Python 3.6 and above
 4. FL should start running
 
 Current difficulties faced:
-- How to send updated model into server, this is to allow the other clients to use the updated model
+- The Flower framework used for federated learning not very well documented, not easy to understand. 
+	- In addition, difficulty placing model such as LightGBM as it uses different algorithms.
+	- Lack of resources online for flower, relatively new.
 - Developing a better model for use with the FL system
 
 Documentation:
