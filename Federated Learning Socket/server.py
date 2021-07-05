@@ -38,6 +38,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
             print("Received model from the client.")
 
             # Saves model to storage
-            filename = 'Model/LGBM_Model_Updated.sav'
+            # filename = 'Model/LGBM_Model_Updated.sav'
+            filename = 'Model/LGBM_Model.sav'
             pickle.dump(model, open(filename, 'wb'))
             print("Model updated successfully.")
