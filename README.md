@@ -1,3 +1,20 @@
+			# -- Table of Content --
+
+
+###- 'root' folder
+	Federated Learning using Flower framework
+			
+###- Federated Learning Socket folder 
+	Federated Learning using socket programming
+
+###- Model folder 
+	Clean raw dataset from Kaggle
+	Train Base Model (LightGBM)
+
+------------------------------------------------------------------------------------------------------------------------
+
+## Federated Learning using FLower framework
+
 Run on Python 3.6 and above
 
 1. run trainingbase.py to get the model to save for loading
@@ -18,3 +35,4 @@ Current difficulties faced:
 
 Documentation:
 https://flower.dev/docs/example-pytorch-from-centralized-to-federated.html
+
