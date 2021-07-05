@@ -1,6 +1,8 @@
 # Federated Learning Socket
 
-### Pre-requisite library
+### Pre-requisite
+- Python 3.7
+- Pycharm, Jupyter Notebook, etc...
 - pandas
 - numpy
 - lightgbm
