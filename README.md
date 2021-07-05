@@ -1,19 +1,20 @@
-			# -- Table of Content --
+#  Table of Content 
+#### - 'root' folder
+- Federated Learning using Flower framework	
 
+#### - Federated Learning Socket folder 
+- Federated Learning using socket programming
 
-###- 'root' folder
-	Federated Learning using Flower framework
-			
-###- Federated Learning Socket folder 
-	Federated Learning using socket programming
-
-###- Model folder 
-	Clean raw dataset from Kaggle
-	Train Base Model (LightGBM)
+#### - Model folder 
+- Clean raw dataset from Kaggle
+- Train Base Model (LightGBM)
+	
+#### - basemodel folder 
+- Model using keras
 
 ------------------------------------------------------------------------------------------------------------------------
 
-## Federated Learning using FLower framework
+## Federated Learning using Flower framework
 
 Run on Python 3.6 and above
 
