@@ -14,7 +14,7 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 if __name__ == "__main__":
     # Load dataset
     # Cleaning dataset
-    train_dataset = pd.read_csv("https://raw.githubusercontent.com/LowTeckWei/itp-se3/main/Energy%20Prediction/Data/dataset_train.csv?token=ANHIIDFOJOI765YKDI2TIJDA4QLOI")
+    train_dataset = pd.read_csv("Federated Learning Socket/Data/site_0.csv")
     # End Load Data
 
     """ 
@@ -219,7 +219,10 @@ if __name__ == "__main__":
             model.set_weights(parameters)
             #loss, accuracy = model.evaluate(x_test, y_test)
             loss, accuracy = model.evaluate(x_test, y_test)
-            return loss, len(x_test), {"accuracy": accuracy}
+
+            # Return results, including the custom accuracy metric
+            num_examples_test = len(x_train)
+            return loss, num_examples_test, {"accuracy": accuracy}
 
     # Start Flower client
     fl.client.start_numpy_client(server_address="[::]:8080", client=CifarClient())
