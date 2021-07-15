@@ -2,11 +2,11 @@ import socket
 import pickle
 import pandas as pd
 import numpy as np
-import lightgbm
+import lightgbm as lgb
 
 HOST = 'localhost'  # The server's hostname or IP address
 PORT = 65432        # The port used by the server
-BUFFER_SIZE = 9000000
+BUFFER_SIZE = 90000000
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
     print("Socket is created.")
@@ -20,10 +20,11 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
 
     # Receives model from server
     model = pickle.loads(received_data)
-    print(model)
     print("Received model from the server.")
+    print(model)
     # Load local dataset
-    train_dataset = pd.read_csv("Data/site_1.csv")
+    train_dataset = pd.read_csv("Data/client2.csv")
+    # test_dataset = pickle.load( open( "Data/test_dataset.p", "rb" ) )
 
     # Train using base model
     train_dataset['timestamp'] = pd.to_datetime(train_dataset['timestamp'])  # Convert timestamp to datatime
@@ -127,8 +128,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
 
     scaler = GroupTargetTransform(
         MinMaxScaler(feature_range=(0, 2000)))  # 2000 is roughly the average meter reading for all the train data
-    train_dataset['meter_reading'] = scaler.fit_transform(train_dataset, train_dataset['meter_reading'],
-                                                          ['building_id', 'meter'])
+    train_dataset['meter_reading'] = scaler.fit_transform(train_dataset, train_dataset['meter_reading'], ['building_id', 'meter'])
     # convert to log(y+1) so the RMSE evaluation metric is actually giving the RMSLE
     train_dataset['meter_reading'] = np.log1p(train_dataset['meter_reading'])
 
@@ -141,12 +141,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
     train_dataset = train_dataset.drop("timestamp", axis=1)
 
     # prepare training data
-    X = train_dataset
-
-    # prepare training data
-    X = train_dataset
-    X = train_dataset.dropna(subset=['meter_reading'])  # drop all rows where the meter reading is not included
-    y = train_dataset["meter_reading"]
+    X = train_dataset.copy()
+    # X = X.dropna(subset=['meter_reading'])  # drop all rows where the meter reading is not included
+    y = train_dataset['meter_reading'].copy()
 
     # Remove meter_reading so that it does not have the "answers"
     del X['meter_reading']
@@ -155,22 +152,34 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
     # 80% train, 20% eval
     X_train, X_eval, y_train, y_eval = train_test_split(X, y, test_size=0.2, random_state=13)
     # using the 80% train, I take out 20% for evaluation of accuracy
-    X_train, X_test, y_train, y_test = train_test_split(X_train, y_train, test_size=0.2, random_state=12)
+    # X_train, X_test, y_train, y_test = train_test_split(X_train, y_train, test_size=0.2, random_state=12)
+
+    test_dataset = pickle.load( open( "Data/test_dataset.p", "rb" ) )
+
+    X_test = test_dataset.copy()
+    # X_test = X_test.dropna(subset=['meter_reading'])  # drop all rows where the meter reading is not included
+    y_test = test_dataset["meter_reading"].copy()
+
+    del X_test['meter_reading']
+    del X_test['site_id']
 
     model.fit(X_train, y_train,
               eval_set=[(X_eval, y_eval)],
-              eval_metric='l1',
-              early_stopping_rounds=1000)
-
+              eval_metric='l1')
 
     def clip(x):
         return np.clip(x, a_min=0, a_max=None)
 
     # Prediction
-    y_pred = clip(model.predict(X_test, num_iteration=model.best_iteration_))
+    print("Predicting...")
+    y_predicted = clip(model.predict(X_test, num_iteration=model.best_iteration_))
+    y_expected = y_test
+    from sklearn import metrics
 
-    # Basic RMLSE
-    print('The rmse of prediction is:', round(mean_squared_log_error(y_pred, clip(y_test)) ** 0.5, 5))
+    #  R2 Score (coefficient of determination) regression score function. Best score 1.0 | Worst score 0.0
+    print('R2 Score: ', round((metrics.r2_score(y_expected, y_predicted)), 5))
+    # RMLSE
+    print('The RMLSE of prediction is:', round(np.sqrt(mean_squared_log_error(y_predicted, y_expected)), 5))
 
     # Sends trained model back to server
     model = pickle.dumps(model)

@@ -4,7 +4,7 @@ import lightgbm
 
 HOST = 'localhost'  # Standard loopback interface address (localhost)
 PORT = 65432        # Port to listen on (non-privileged ports are > 1023)
-BUFFER_SIZE = 9000000
+BUFFER_SIZE = 90000000
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
     print("Socket is created.")
@@ -21,7 +21,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
             print('Connected by', address)
 
             # Load Base Trained Model
-            filename = 'Model/LGBM_model.sav'
+            filename = 'Data/Model/LGBM_model.sav'
             model = pickle.load(open(filename, 'rb'))
             model = pickle.dumps(model)
             connection.sendall(model)
@@ -38,7 +38,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
             print("Received model from the client.")
 
             # Saves model to storage
-            # filename = 'Model/LGBM_Model_Updated.sav'
-            filename = 'Model/LGBM_Model.sav'
+            filename = 'Data/Model/LGBM_Model.sav'
             pickle.dump(model, open(filename, 'wb'))
             print("Model updated successfully.")
