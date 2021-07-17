@@ -1,0 +1,5 @@
+﻿meter_id,primary_use
+0,electricity
+1,chilled_water
+2,steam
+3,hot_water

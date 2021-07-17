@@ -24,6 +24,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
     print(model)
     # Load local dataset
     train_dataset = pd.read_csv("Data/client2.csv")
+    train_dataset = train_dataset.sample(frac=0.05, random_state=1)
     # test_dataset = pickle.load( open( "Data/test_dataset.p", "rb" ) )
 
     # Train using base model
@@ -163,16 +164,36 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
     del X_test['meter_reading']
     del X_test['site_id']
 
-    model.fit(X_train, y_train,
+    params = {
+        'task': 'train',
+        'boosting_type': 'gbdt',
+        'objective': 'regression',
+        'metric': ['l1', 'l2', 'rmse'],
+        'learning_rate': 0.05,
+        'feature_fraction': 0.8,
+        'bagging_fraction': 0.7,
+        'bagging_freq': 10,
+        'verbose': 0,
+        "max_depth": 8,
+        "num_leaves": 192,
+        "max_bin": 512,
+        "n_estimators": 1000,
+        "early_stopping_rounds": 1000
+    }
+
+    # Fit
+    print("Fitting...")
+    new_model = lgb.LGBMRegressor(**params)
+    new_model.fit(X_train, y_train,
               eval_set=[(X_eval, y_eval)],
-              eval_metric='l1')
+              init_model=model)
 
     def clip(x):
         return np.clip(x, a_min=0, a_max=None)
 
     # Prediction
     print("Predicting...")
-    y_predicted = clip(model.predict(X_test, num_iteration=model.best_iteration_))
+    y_predicted = clip(new_model.predict(X_test, num_iteration=new_model.best_iteration_))
     y_expected = y_test
     from sklearn import metrics
 
@@ -182,8 +203,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
     print('The RMLSE of prediction is:', round(np.sqrt(mean_squared_log_error(y_predicted, y_expected)), 5))
 
     # Sends trained model back to server
-    model = pickle.dumps(model)
-    soc.sendall(model)
+    new_model = pickle.dumps(new_model)
+    soc.sendall(new_model)
     print("Model sent to server.")
 
     soc.close()
