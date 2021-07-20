@@ -27,7 +27,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
     train_dataset = train_dataset.sample(frac=0.05, random_state=1)
     # test_dataset = pickle.load( open( "Data/test_dataset.p", "rb" ) )
 
-    # Train using base model
+    # Test using base model
     train_dataset['timestamp'] = pd.to_datetime(train_dataset['timestamp'])  # Convert timestamp to datatime
     train_dataset = train_dataset.sort_values(by=['site_id', 'timestamp'])  # short values by site id then timestamp
     train_dataset.fillna(method='ffill', inplace=True, limit=24)  # forward fill the missing data up to 12 hours

@@ -18,10 +18,10 @@ test_dataset = pd.read_csv("Data/Federated/Test/dataset_test.csv")
 
 # # 4. Cleaning of data
 
-# ## 4.1 Cleaning Train dataset
+# ## 4.1 Cleaning Test dataset
 
 
-#Train
+#Test
 train_dataset['timestamp'] = pd.to_datetime(train_dataset['timestamp']) #Convert timestamp to datatime
 train_dataset = train_dataset.sort_values(by=['site_id', 'timestamp']) #short values by site id then timestamp
 train_dataset.fillna(method = 'ffill', inplace=True, limit = 24)#forward fill the missing data up to 12 hours
@@ -159,7 +159,7 @@ test_dataset['meter_reading'] = scaler.fit_transform(test_dataset, test_dataset[
 train_dataset['meter_reading'] = np.log1p(train_dataset['meter_reading']) 
 test_dataset['meter_reading'] = np.log1p(test_dataset['meter_reading'])
 
-# # 7. Train Model
+# # 7. Test Model
 
 from sklearn.model_selection import train_test_split
 from lightgbm import LGBMRegressor
