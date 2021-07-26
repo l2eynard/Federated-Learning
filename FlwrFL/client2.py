@@ -16,9 +16,9 @@ if __name__ == "__main__":
     # Load dataset
     # Cleaning dataset
     train_dataset = pd.read_csv("Data/Client/client2.csv")
-    train_dataset = train_dataset.sample(frac=0.01, random_state=1)
+    # train_dataset = train_dataset.sample(frac=0.01, random_state=1)
     test_dataset = pd.read_csv("Data/Test/dataset_test.csv")
-    test_dataset = test_dataset.sample(frac=0.5, random_state=1)
+    # test_dataset = test_dataset.sample(frac=0.5, random_state=1)
 
     # End Load Data
 
@@ -261,7 +261,7 @@ if __name__ == "__main__":
 
         def fit(self, parameters, config):  # type: ignore
             model.set_weights(parameters)
-            model.fit(X_train, y_train, validation_split=0.2, epochs=20, callbacks=[early_stopping_monitor])
+            model.fit(X_train, y_train, validation_split=0.2, epochs=100, callbacks=[early_stopping_monitor])
             return model.get_weights(), len(X_train), {}
 
         def evaluate(self, parameters, config):  # type: ignore
