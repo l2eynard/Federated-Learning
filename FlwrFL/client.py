@@ -245,13 +245,13 @@ if __name__ == "__main__":
     from keras.callbacks import EarlyStopping
     #
     # set early stopping monitor so the model stops training when it won't improve anymore
-    early_stopping_monitor = EarlyStopping(patience=3)
+    early_stopping_monitor = EarlyStopping(monitor="mean_squared_error",patience=3)
     """
     End Keras Model
     """
     from tensorflow import keras
     model = keras.models.load_model("Data/Model/Keras_Model.h5")
-    model.compile(optimizer='adam', loss='mean_squared_error', metrics='accuracy')
+    model.compile(optimizer='adam', loss='mean_squared_error', metrics=[tf.keras.metrics.MeanSquaredError()])
 
 
     # Define Flower client
@@ -261,7 +261,7 @@ if __name__ == "__main__":
 
         def fit(self, parameters, config):  # type: ignore
             model.set_weights(parameters)
-            model.fit(X_train, y_train, validation_split=0.2, epochs=100, callbacks=[early_stopping_monitor])
+            model.fit(X_train, y_train, epochs=100, callbacks=[early_stopping_monitor])
             return model.get_weights(), len(X_train), {}
 
         def evaluate(self, parameters, config):  # type: ignore
@@ -270,7 +270,7 @@ if __name__ == "__main__":
 
             # Return results, including the custom accuracy metric
             num_examples_test = len(X_train)
-            return loss, num_examples_test, {"accuracy": accuracy}
+            return loss, num_examples_test, {"mean squared error": accuracy}
 
     # Start Flower client
     fl.client.start_numpy_client(server_address="[::]:8080", client=CifarClient())
