@@ -16,9 +16,9 @@ if __name__ == "__main__":
     # Load dataset
     # Cleaning dataset
     train_dataset = pd.read_csv("Data/Client/client.csv")
-    train_dataset = train_dataset.sample(frac=0.01, random_state=1)
+    #train_dataset = train_dataset.sample(frac=0.01, random_state=1)
     test_dataset = pd.read_csv("Data/Test/dataset_test.csv")
-    test_dataset = test_dataset.sample(frac=0.5, random_state=1)
+    #test_dataset = test_dataset.sample(frac=0.5, random_state=1)
 
     # End Load Data
 
@@ -245,13 +245,13 @@ if __name__ == "__main__":
     from keras.callbacks import EarlyStopping
     #
     # set early stopping monitor so the model stops training when it won't improve anymore
-    early_stopping_monitor = EarlyStopping(monitor="root_mean_squared_error",patience=3)
+    early_stopping_monitor = EarlyStopping(monitor="mean_squared_logarithmic_error",patience=3)
     """
     End Keras Model
     """
     from tensorflow import keras
     model = keras.models.load_model("Data/Model/Keras_Model.h5")
-    model.compile(optimizer='adam', loss='mse', metrics=[tf.keras.metrics.RootMeanSquaredError()])
+    model.compile(optimizer='sgd', loss='mean_squared_logarithmic_error', metrics=[tf.keras.metrics.MeanSquaredLogarithmicError()])
 
 
     # Define Flower client
@@ -270,7 +270,7 @@ if __name__ == "__main__":
 
             # Return results, including the custom accuracy metric
             num_examples_test = len(X_train)
-            return loss, num_examples_test, {"RMSE": accuracy}
+            return loss, num_examples_test, {"MSLE": accuracy}
 
     # Start Flower client
     fl.client.start_numpy_client(server_address="[::]:8080", client=CifarClient())
